@@ -8,25 +8,19 @@ C_BD = 2
 C_COMICS = 3
 
 f = open('data.json','r')
-   
-# returns JSON object as 
-# a dictionary
+
 data = json.load(f)
 f.close()
 sg.theme('DarkAmber')   # Add a touch of color
-# All the stuff inside your window.
 layoutMain = [ 
         [ sg.InputText(key='NewBookInput') ],
         [sg.Radio('Roman', "RADIO1", default=True,key="radioRoman"), sg.Radio('Manga', "RADIO1",key="radioManga"), sg.Radio('BD', "RADIO1",key="radioBD"),sg.Radio('Comics', "RADIO1",key="radioComics"),
         sg.Button('Ajouter')],
         [ sg.InputText(),sg.Button('Recherche')],
-        #[ sg.Multiline(size=(70, 21),reroute_cprint=True)]
         [sg.Listbox(values = [], select_mode=sg.SELECT_MODE_EXTENDED,enable_events=True, size=(50,20), bind_return_key=True, key='listOfBook')],
         ]
 
-# Create the Window
 window = sg.Window('Window Title', layoutMain)
-# Event Loop to process "events" and get the "values" of the inputs
 
 def open_window(value):
     val = value.split('|')
@@ -82,8 +76,6 @@ while True:
                     typeOfBook = 'BD    '
                 elif book['type'] == C_COMICS:
                     typeOfBook = 'Comics'
-                #sg.cprint(typeOfBook + " | " + book["title"], end='')
-                #sg.cprint('')
                 val.append(typeOfBook + " | " + book["title"] + " | " + book["numeros"])
         window['listOfBook'].update(val)
     elif event == "Ajouter":
@@ -117,8 +109,6 @@ while True:
                     typeOfBook = 'BD    '
                 elif book['type'] == C_COMICS:
                     typeOfBook = 'Comics'
-                #sg.cprint(typeOfBook + " | " + book["title"], end='')
-                #sg.cprint('')
                 val.append(typeOfBook + " | " + book["title"] + " | " + book["numeros"])
         window['listOfBook'].update(val)
 
