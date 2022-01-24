@@ -8,7 +8,6 @@ C_BD = 2
 C_COMICS = 3
 
 f = open('data.json','r')
-
 data = json.load(f)
 f.close()
 sg.theme('DarkAmber')   # Add a touch of color
@@ -21,6 +20,21 @@ layoutMain = [
         ]
 
 window = sg.Window('Window Title', layoutMain)
+
+def writeFile():
+    f = open('data.json','w+')
+    f.write(json.dumps(data))
+    f.close()
+
+def getValFromConst(param):
+    val = C_ROMAN
+    if param['radioManga']:
+        val = C_MANGA
+    elif param['radioBD']:
+        val = C_BD
+    elif param['radioComics']:
+        val = C_COMICS
+    return val
 
 def open_window(value):
     val = value.split('|')
@@ -43,24 +57,15 @@ def open_window(value):
             for book in data:
                 if val[1].find(book['title']) != -1:
                     book['title'] = values['BookTitle'].strip()
-                    radio = C_ROMAN
-                    if values['radioManga']:
-                        radio = C_MANGA
-                    elif values['radioBD']:
-                        radio = C_BD
-                    elif values['radioComics']:
-                        radio = C_COMICS
+                    radio = getValFromConst(values)
                     book['type'] = radio
                     book['numeros'] = values['Numeros'].strip()
-                    f = open('data.json','w+')
-                    f.write(json.dumps(data))
-                    f.close()
+                    writeFile()
             break
     window.close()
 
 lastSearch = ""
 while True:
-
     event, values = window.read()
     if event == sg.WIN_CLOSED or event == 'Cancel': # if user closes window or clicks cancel
         break
@@ -79,23 +84,14 @@ while True:
                 val.append(typeOfBook + " | " + book["title"] + " | " + book["numeros"])
         window['listOfBook'].update(val)
     elif event == "Ajouter":
-        typeOfBook = C_ROMAN
-        if (values['radioBD']):
-            typeOfBook = C_BD
-        elif (values['radioComics']):
-            typeOfBook = C_COMICS
-        elif (values['radioManga']):
-            typeOfBook = C_MANGA
-
+        typeOfBook = getValFromConst(values)
         val = {
             "title" : values['NewBookInput'],
             "type"  : typeOfBook,
             "numeros" : ""
         }
         data.append(val)
-        f = open('data.json','w+')
-        f.write(json.dumps(data))
-        f.close()
+        writeFile()
         window['NewBookInput'].update('')
     elif event =='listOfBook':
         open_window(values['listOfBook'][0])
