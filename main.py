@@ -71,9 +71,9 @@ while True:
         break
     if event == "Recherche":
         val=[]
-        lastSearch = values[0]
+        lastSearch = values[0].upper()
         for book in data:
-            if book["title"].find(values[0]) != -1:
+            if book["title"].upper().find(lastSearch) != -1:
                 typeOfBook = "Roman "
                 if book['type'] == C_MANGA:
                     typeOfBook = "Manga "
@@ -97,7 +97,7 @@ while True:
         open_window(values['listOfBook'][0])
         val=[]
         for book in data:
-            if book["title"].find(lastSearch) != -1:
+            if book["title"].upper().find(lastSearch) != -1:
                 typeOfBook = "Roman "
                 if book['type'] == C_MANGA:
                     typeOfBook = "Manga "
