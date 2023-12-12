@@ -15,11 +15,13 @@ layoutMain = [
         [ sg.InputText(key='NewBookInput') ],
         [sg.Radio('Roman', "RADIO1", default=True,key="radioRoman"), sg.Radio('Manga', "RADIO1",key="radioManga"), sg.Radio('BD', "RADIO1",key="radioBD"),sg.Radio('Comics', "RADIO1",key="radioComics"),
         sg.Button('Ajouter')],
-        [ sg.InputText(),sg.Button('Recherche')],
+        [ sg.InputText(key='ITrecherche'),sg.Button('Recherche')],
         [sg.Listbox(values = [], select_mode=sg.SELECT_MODE_EXTENDED,enable_events=True, size=(50,20), bind_return_key=True, key='listOfBook')],
         ]
+    
 
-window = sg.Window('Window Title', layoutMain)
+mainWindow = sg.Window('Window Title', layoutMain, finalize=True)
+mainWindow['ITrecherche'].bind("<Return>", "_Enter")
 
 def writeFile():
     f = open('data.json','w+')
@@ -54,10 +56,11 @@ def open_window(value):
          [sg.InputText(val[2],key='Numeros')],
          [sg.Button('Update')]
     ]
-    window = sg.Window("Second Window", layoutChild, modal=True)
+    windowUpdate = sg.Window("Second Window", layoutChild, modal=True)
+
     choice = None
     while True:
-        event, values = window.read()
+        event, values = windowUpdate.read()
         if event == "Exit" or event == sg.WIN_CLOSED:
             break
         elif event == 'Update':
@@ -69,16 +72,17 @@ def open_window(value):
                     book['numeros'] = values['Numeros'].strip()
                     writeFile()
             break
-    window.close()
+        
+    windowUpdate.close()
 
 lastSearch = ""
 while True:
-    event, values = window.read()
+    event, values = mainWindow.read()
     if event == sg.WIN_CLOSED or event == 'Cancel': # if user closes window or clicks cancel
         break
-    if event == "Recherche":
+    if event == "Recherche" or event == "ITrecherche" + "_Enter":
         val=[]
-        lastSearch = values[0].upper()
+        lastSearch = values['ITrecherche'].upper()
         for book in data:
             if book["title"].upper().find(lastSearch) != -1:
                 typeOfBook = "Roman "
@@ -89,7 +93,7 @@ while True:
                 elif book['type'] == C_COMICS:
                     typeOfBook = 'Comics'
                 val.append(typeOfBook + " | " + book["title"] + " | " + book["numeros"])
-        window['listOfBook'].update(val)
+        mainWindow['listOfBook'].update(val)
     elif event == "Ajouter":
         typeOfBook = getValFromConst(values)
         val = {
@@ -99,7 +103,8 @@ while True:
         }
         data.append(val)
         writeFile()
-        window['NewBookInput'].update('')
+        mainWindow['NewBookInput'].update('')
+        
     elif event =='listOfBook':
         open_window(values['listOfBook'][0])
         val=[]
@@ -113,6 +118,6 @@ while True:
                 elif book['type'] == C_COMICS:
                     typeOfBook = 'Comics'
                 val.append(typeOfBook + " | " + book["title"] + " | " + book["numeros"])
-        window['listOfBook'].update(val)
+        mainWindow['listOfBook'].update(val)
 
-window.close()
+mainWindow.close()
