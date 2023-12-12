@@ -25,6 +25,13 @@ def writeFile():
     f = open('data.json','w+')
     f.write(json.dumps(data))
     f.close()
+    f = open('data.json')
+    fileContent = "data = " + f.read()
+    f.close()
+    f = open('datajs.js','w')
+    f.write(fileContent)
+    f.close()
+
 
 def getValFromConst(param):
     val = C_ROMAN
