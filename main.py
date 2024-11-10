@@ -22,6 +22,7 @@ layoutMain = [
 
 mainWindow = sg.Window('Window Title', layoutMain, finalize=True)
 mainWindow['ITrecherche'].bind("<Return>", "_Enter")
+previousTitle = ""
 
 def writeFile():
     f = open('data.json','w+')
@@ -65,7 +66,7 @@ def open_window(value):
             break
         elif event == 'Update':
             for book in data:
-                if val[1].find(book['title']) != -1:
+                if val[1].strip() == book['title'].strip():
                     book['title'] = values['BookTitle'].strip()
                     radio = getValFromConst(values)
                     book['type'] = radio
